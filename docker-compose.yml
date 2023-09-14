@@ -1,0 +1,27 @@
+version: "1.0"
+services:
+  database:
+    image: postgres:14.6-alpine
+    container_name: db_app
+    env_file:
+      - .env
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:7.0.5-alpine
+    hostname: redis
+    container_name: redis_app
+
+  app:
+    build:
+      context: .
+    container_name: fastapi_app
+    ports:
+      - 8000:8000
+    volumes:
+      - ./management:/management
+    command: ["/user_manage/entrypoint.sh"]
+    depends_on:
+      - database
+      - redis
