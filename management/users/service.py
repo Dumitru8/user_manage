@@ -72,10 +72,11 @@ class UserData:
 
     @classmethod
     async def add(cls, **data):
-        query = insert(User).values(**data)
+        query = insert(User).values(**data).returning(User.username)
         async with async_session_maker() as session:
             result = await session.execute(query)
             await session.commit()
+            return result.mappings().first()
 
     @classmethod
     async def user_update(cls, user_id, **data):

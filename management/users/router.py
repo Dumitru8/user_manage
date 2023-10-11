@@ -45,9 +45,11 @@ async def delete_current_user(user_id: uuid.UUID = Depends(get_user_id_from_toke
 
 
 @router.patch("/{user_id}")
-async def get_user_by_id(user_id: uuid.UUID, user_data: SUserUpd) -> SUser:
+async def get_user_by_id(user_id: uuid.UUID, user_data: SUserUpd,
+                         current_user_id: uuid.UUID = Depends(get_user_id_from_token)) -> SUser:
+    current_user = await UserData.get_by_id(current_user_id)
     user = await UserData.get_by_id(user_id)
-    if user.role != Role.ADMIN:
+    if current_user.role != Role.ADMIN:
         raise HTTPException(status_code=403, detail="Have no access. Admin only")
     await UserData.user_update(
         user_id,
