@@ -18,7 +18,7 @@ async def test_add_and_get_user():
         s3_path="steve",
         is_blocked=False,
         created_at=datetime.strptime("2023-10-10T16:31:52", "%Y-%m-%dT%H:%M:%S"),
-        modified_at=datetime.strptime("2023-10-10T16:31:52", "%Y-%m-%dT%H:%M:%S")
+        modified_at=datetime.strptime("2023-10-10T16:31:52", "%Y-%m-%dT%H:%M:%S"),
     )
     assert new_user.username == "steve"
     #

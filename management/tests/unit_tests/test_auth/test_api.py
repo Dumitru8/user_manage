@@ -84,14 +84,16 @@ async def test_signup(
     assert response.status_code == status_code
 
 
-@pytest.mark.parametrize("username,password,status_code", [
-    ("testing", "testing", 200),
-    ("no_exist", "no_exist", 401),
-    ("no_exist", True, 401),
-])
+@pytest.mark.parametrize(
+    "username,password,status_code",
+    [
+        ("testing", "testing", 200),
+        ("no_exist", "no_exist", 401),
+        ("no_exist", True, 401),
+    ],
+)
 async def test_login(username, password, status_code, ac: AsyncClient):
-    response = await ac.post("/auth/login", data={
-        "username": username,
-        "password": password
-        })
+    response = await ac.post(
+        "/auth/login", data={"username": username, "password": password}
+    )
     assert response.status_code == status_code

@@ -3,11 +3,11 @@ import json
 from datetime import datetime
 
 import pytest
+from fastapi.testclient import TestClient
 from httpx import AsyncClient
 from sqlalchemy import insert
-from fastapi.testclient import TestClient
 
-from management.database import Base, engine, async_session_maker
+from management.database import Base, async_session_maker, engine
 from management.main import app as fastapi_app
 from management.users.models import Group, User
 
@@ -60,5 +60,5 @@ async def ac():
 async def authenticated_ac():
     async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
         login_data = {"username": "testing", "password": "testing"}
-        await ac.post('/auth/login', data=login_data)
+        await ac.post("/auth/login", data=login_data)
         yield ac

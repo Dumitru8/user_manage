@@ -1,10 +1,19 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Enum, UUID
 from pydantic import EmailStr
+from sqlalchemy import (
+    UUID,
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+)
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.orm import validates, relationship
+from sqlalchemy.orm import relationship, validates
 
 from management.database import Base
 from management.users.enum import Role
@@ -17,7 +26,7 @@ class Group(Base):
     name: str = Column(String(50), nullable=False, unique=True)
     created_at: DateTime = Column(DateTime, default=datetime.now())
 
-    users = relationship('User', back_populates='group')
+    users = relationship("User", back_populates="group")
 
     def __str__(self):
         return f"Group {self.name}"
@@ -42,9 +51,9 @@ class User(Base):
         DateTime, default=datetime.now(), onupdate=datetime.now()
     )
 
-    group = relationship('Group', back_populates='users')
+    group = relationship("Group", back_populates="users")
 
-    @validates('password')
+    @validates("password")
     def validate_password(self, value):
         if len(value) < 8:
             raise ValueError("Password should be at least 8 symbols")

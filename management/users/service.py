@@ -1,11 +1,11 @@
 import uuid
 
 from fastapi import HTTPException
+from sqlalchemy import asc, delete, desc, insert, select, update
 
 from management.database import async_session_maker
-from management.users.models import User
 from management.users.enum import Role
-from sqlalchemy import select, insert, update, delete, asc, desc
+from management.users.models import User
 
 
 class UserData:
@@ -42,8 +42,9 @@ class UserData:
                 result = users.scalars().all()
                 if not result:
                     raise HTTPException(
-                        status_code=403, detail="Have no access.Moderator and users has to be same group"
-                        )
+                        status_code=403,
+                        detail="Have no access.Moderator and users has to be same group",
+                    )
                 return result
         async with async_session_maker() as session:
             query = (

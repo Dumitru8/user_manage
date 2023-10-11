@@ -1,20 +1,20 @@
 import os
-
-import redis
-import jwt
 from datetime import datetime, timedelta
-from fastapi import HTTPException, status, Depends
+
+import jwt
+import redis
+from dotenv import load_dotenv
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from pydantic import EmailStr
 
 from management.users.service import UserData
-from dotenv import load_dotenv
 
 load_dotenv()
 
-redis_host = os.getenv('REDIS_HOST')
-redis_port = int(os.getenv('REDIS_PORT'))
+redis_host = os.getenv("REDIS_HOST")
+redis_port = int(os.getenv("REDIS_PORT"))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -43,9 +43,7 @@ def verify_password(plain_password, hashed_password) -> bool:
 
 
 def create_token(data: dict, flag: bool) -> str:
-    token_expire = (
-        ACCESS_TOKEN_EXPIRE_MINUTES if flag else REFRESH_TOKEN_EXPIRE_MINUTES
-    )
+    token_expire = ACCESS_TOKEN_EXPIRE_MINUTES if flag else REFRESH_TOKEN_EXPIRE_MINUTES
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=token_expire)
     to_encode.update({"exp": expire})
