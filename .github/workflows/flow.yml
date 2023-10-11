@@ -1,0 +1,21 @@
+name: CI/CD Pipeline
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: docker-compose up --build
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_HOST: database
+          POSTGRES_PORT: 5432
+
