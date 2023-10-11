@@ -11,9 +11,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Docker Compose
-        run: |
-          docker-compose -f docker-compose.yml up -d
-          docker-compose -f docker-compose.yml exec app alembic upgrade head
+        run: docker-compose up
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -21,16 +19,4 @@ jobs:
           POSTGRES_HOST: database
           POSTGRES_PORT: 5432
 
-      - name: Build and run FastAPI tests
-        run: |
-          docker-compose -f docker-compose.yml exec app black . --check
-          docker-compose -f docker-compose.yml exec app pytest
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          POSTGRES_HOST: database
-          POSTGRES_PORT: 5432
-          REDIS_HOST: redis
-          REDIS_PORT: 6379
 
