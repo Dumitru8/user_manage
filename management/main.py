@@ -1,38 +1,23 @@
 import os
-
-from fastapi import FastAPI, Request
-from pydantic import BaseModel, EmailStr
-from pydantic_extra_types.phone_numbers import PhoneNumber
 import time
+
+from dotenv import load_dotenv
+from fastapi import FastAPI, Request
 from management.logger import logger
 from management.users.router import router as router_users
-
+from management.healthcheck.router import router as router_healthcheck
+from management.auth.router import router as router_auth
 from management.settings import DevAppSettings, BaseAppSettings, TestAppSettings
+
+load_dotenv()
 
 app = FastAPI()
 
+app.include_router(router_healthcheck)
+app.include_router(router_auth)
 app.include_router(router_users)
 
 current_environment = os.getenv('CURRENT_DEVELOPMENT')
-
-
-@app.get("/healthcheck")
-async def healthcheck():
-    return {"message": "Hello World"}
-
-
-class SSignup(BaseModel):
-    name: str
-    surname: str
-    username: str
-    phone_number: PhoneNumber
-    email: EmailStr
-
-
-@app.post("/auth/signup")
-async def signup(sign: SSignup):
-    pass
-
 
 settings_ = {"development": DevAppSettings, "testing": TestAppSettings}
 settings = settings_[current_environment]() if current_environment else BaseAppSettings()
