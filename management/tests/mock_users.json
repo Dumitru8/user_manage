@@ -9,7 +9,7 @@
         "password": "$2b$12$juFyazstvVpvBg5sE5F2QermYGnF1VwBQJyWheAZDvb4JskkEZ7qe",
         "role": "USER",
         "group_id": 1,
-        "s3_path": "string",
+        "s3_path": "https://user-system-glob.s3.eu-north-1.amazonaws.com/media/50b3c.jpg",
         "is_blocked": true,
         "created_at": "2023-10-02",
         "modified_at": "2023-10-02"
@@ -24,7 +24,7 @@
         "password": "$2b$12$YXNBFs.ooBRctTUaw0r3euWVjZ3uJG7sFj/tBS7w/g9u6LPqEJRya",
         "role": "USER",
         "group_id": 1,
-        "s3_path": "dell",
+        "s3_path": "https://user-system-glob.s3.eu-north-1.amazonaws.com/media/britanskaya-3.jpg",
         "is_blocked": true,
         "created_at": "2023-10-02",
         "modified_at": "2023-10-02"
@@ -39,7 +39,7 @@
         "password": "$2b$12$yM7RXLJU9D2wE9AZpVxeDugvVlDyKdsWU3AN8/xPEYxfHOunHfc0a",
         "role": "USER",
         "group_id": 1,
-        "s3_path": "testing",
+        "s3_path": "https://user-system-glob.s3.eu-north-1.amazonaws.com/media/cat.webp",
         "is_blocked": true,
         "created_at": "2023-10-02",
         "modified_at": "2023-10-03"
@@ -54,7 +54,7 @@
         "password": "sqdkkqhwd",
         "role": "USER",
         "group_id": 2,
-        "s3_path": "path2",
+        "s3_path": "https://user-system-glob.s3.eu-north-1.amazonaws.com/media/Felis_silvestris_silvestris.jpg",
         "is_blocked": false,
         "created_at": "1999-11-11",
         "modified_at": "2000-12-12"
@@ -69,7 +69,7 @@
         "password": "$2b$12$VsIJfhu4skdavFSpT0c7/uboBGyJ6hL9mE55nfL6a86mI/95UY.mm",
         "role": "USER",
         "group_id": 1,
-        "s3_path": "testing",
+        "s3_path": "https://user-system-glob.s3.eu-north-1.amazonaws.com/media/istockphoto-587198744-1024x1024.jpg",
         "is_blocked": true,
         "created_at": "2020-09-25",
         "modified_at": "2023-10-02"
@@ -84,7 +84,7 @@
         "password": "$2b$12$5cH30Qp/0p5hTL4Bp5M5EOwLr9Sb2aGzzZRFhlUnWquNnQZcvVbvC",
         "role": "USER",
         "group_id": 1,
-        "s3_path": "string",
+        "s3_path": "https://user-system-glob.s3.eu-north-1.amazonaws.com/media/max-baskakov-OzAeZPNsLXk-unsplash.jpg.webp",
         "is_blocked": true,
         "created_at": "2023-10-03",
         "modified_at": "2023-10-03"
@@ -99,7 +99,7 @@
         "password": "$2b$12$CJzZZlLB14LKx/NLfzKeEOxnSxwCuQZIOGcf5zyHEm8H5oRo/6tia",
         "role": "ADMIN",
         "group_id": 1,
-        "s3_path": "Arthur",
+        "s3_path": "https://user-system-glob.s3.eu-north-1.amazonaws.com/media/opengraph_0.jpg",
         "is_blocked": true,
         "created_at": "2023-10-04",
         "modified_at": "2023-10-04"
@@ -114,7 +114,7 @@
         "password": "$2b$12$Fn4he/97DO0IPJjgv2LvruWZvVxd/zTT0PUiAVj4IxomHJfRehxOi",
         "role": "MODERATOR",
         "group_id": 1,
-        "s3_path": "string",
+        "s3_path": "https://user-system-glob.s3.eu-north-1.amazonaws.com/media/p4195038.jpg",
         "is_blocked": true,
         "created_at": "2023-10-04",
         "modified_at": "2023-10-04"
@@ -129,7 +129,7 @@
         "password": "$2b$12$qUBeQYCDOxgMBan3VyQ1ceXrLblTa9GWbSw0q32pEox/36pb8BrxW",
         "role": "USER",
         "group_id": 2,
-        "s3_path": "string",
+        "s3_path": "https://user-system-glob.s3.eu-north-1.amazonaws.com/media/p4195038.jpg",
         "is_blocked": true,
         "created_at": "2023-10-02",
         "modified_at": "2023-10-02"
@@ -144,7 +144,7 @@
         "password": "$2b$12$oOsv4i5zs5.NU27geYeaH.WY.I7lNIlyAfyNWw140dnMU0elF3ife",
         "role": "MODERATOR",
         "group_id": 2,
-        "s3_path": "nicetry",
+        "s3_path": "https://user-system-glob.s3.eu-north-1.amazonaws.com/media/welnl2e.jpeg",
         "is_blocked": false,
         "created_at": "2023-09-25",
         "modified_at": "2023-09-25"

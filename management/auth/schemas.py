@@ -15,18 +15,10 @@ class SUserId(BaseModel):
     user_id: uuid.UUID
 
 
-class SUserEmail(BaseModel):
-    email: EmailStr
-
-
-class SUsername(BaseModel):
-    username: str
-
-
 class SResetPass(BaseModel):
     email: EmailStr
     new_password: str
 
 
 class SEmailSchema(BaseModel):
-    email: List[EmailStr]
+    email: EmailStr

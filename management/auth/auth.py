@@ -18,12 +18,14 @@ redis_port = int(os.getenv("REDIS_PORT"))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-redis_client = redis.Redis(host=redis_host, port=redis_port, db=0, decode_responses=True)
+redis_client = redis.Redis(
+    host=redis_host, port=redis_port, db=0, decode_responses=True
+)
 
 JWT_SECRET_KEY = os.getenv("SECRET_KEY")
 JWT_ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES', 60))
-REFRESH_TOKEN_EXPIRE_MINUTES = int(os.getenv('REFRESH_TOKEN_EXPIRE_MINUTES', 60))
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
+REFRESH_TOKEN_EXPIRE_MINUTES = int(os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES", 60))
 
 
 def get_password_hash(password: str) -> str:
@@ -33,10 +35,7 @@ def get_password_hash(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify if entered password hash equals hashed value"""
-    return pwd_context.verify(
-        secret=plain_password,
-        hash=hashed_password
-    )
+    return pwd_context.verify(secret=plain_password, hash=hashed_password)
 
 
 def create_token(data: dict, flag: bool) -> str:

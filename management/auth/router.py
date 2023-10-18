@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi_mail import MessageSchema, MessageType
 from starlette.responses import JSONResponse
 
 from management.auth.auth import (
@@ -9,7 +8,7 @@ from management.auth.auth import (
     get_password_hash,
     get_user_id_from_token,
 )
-from management.auth.email_service import fastmail, generate_reset_link, send_password_reset_email_service
+from management.auth.email_service import generate_reset_link, send_reset_email
 from management.auth.schemas import SEmailSchema, SResetPass, SToken, SUserId
 from management.users.schemas import SUser
 from management.users.service import UserService
@@ -38,7 +37,7 @@ async def signup_user(user_data: SUser):
         s3_path=user_data.s3_path,
         is_blocked=user_data.is_blocked,
         created_at=user_data.created_at,
-        modified_at=user_data.modified_at
+        modified_at=user_data.modified_at,
     )
     return user
 
@@ -48,8 +47,12 @@ async def login_user(user_data: OAuth2PasswordRequestForm = Depends()):
     user = await authenticate_user(user_data.username, user_data.password)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    access_token = create_token({"sub": str(user.id)}, flag=True)
-    refresh_token = create_token({"sub": str(user.id)}, flag=False)
+    access_token = create_token(
+        {"sub": str(user.id), "group_id": user.group_id, "role": user.role}, flag=True
+    )
+    refresh_token = create_token(
+        {"sub": str(user.id), "group_id": user.group_id, "role": user.role}, flag=False
+    )
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -71,17 +74,8 @@ async def refresh_both_tokens(user_id: SUserId = Depends(get_user_id_from_token)
 @router.post("/reset-password")
 async def send_password_reset_email(email: SEmailSchema) -> JSONResponse:
     reset_link = generate_reset_link()
-    message = MessageSchema(
-        subject="Password Reset Link",
-        recipients=email.dict().get("email"),
-        body=f"Click the following link to reset your password: {reset_link}",
-        subtype=MessageType.html,
-    )
-    try:
-        await fastmail.send_message(message)
-        return JSONResponse(status_code=200, content={"message": "email has been sent"})
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    send_reset_email(email=email.dict().get("email"), reset_link=reset_link)
+    return JSONResponse(status_code=200, content={"message": "Email has been sent"})
 
 
 @router.post("/reset-password-data")

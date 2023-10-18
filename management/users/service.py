@@ -23,7 +23,7 @@ class UserService:
             "name": asc(User.name) if ascending else desc(User.name),
             "surname": asc(User.surname) if ascending else desc(User.surname),
             "email": asc(User.email) if ascending else desc(User.email),
-            "username": asc(User.username) if ascending else desc(User.username)
+            "username": asc(User.username) if ascending else desc(User.username),
         }
         order = options.get(sort_by)
         if current_user.role == Role.MODERATOR:
@@ -60,9 +60,7 @@ class UserService:
         async with async_session_maker() as session:
             query = select(User).filter(
                 or_(
-                    User.email == data,
-                    User.username == data,
-                    User.phone_number == data
+                    User.email == data, User.username == data, User.phone_number == data
                 )
             )
             result = await session.execute(query)
