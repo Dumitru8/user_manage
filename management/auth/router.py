@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi_mail import MessageSchema, MessageType
 from starlette.responses import JSONResponse
 
 from management.auth.auth import (
@@ -9,7 +8,7 @@ from management.auth.auth import (
     get_password_hash,
     get_user_id_from_token,
 )
-from management.auth.conf import fastmail
+from management.auth.aws_boto3 import ses
 from management.auth.schemas import SEmailSchema, SResetPass, SToken, SUserId
 from management.users.schemas import SUser
 from management.users.service import UserData
@@ -74,17 +73,39 @@ async def refresh_both_tokens(user_id: SUserId = Depends(get_user_id_from_token)
 @router.post("/reset-password")
 async def send_password_reset_email(email: SEmailSchema) -> JSONResponse:
     reset_link = generate_reset_link()
-    message = MessageSchema(
-        subject="Password Reset Link",
-        recipients=email.dict().get("email"),
-        body=f"Click the following link to reset your password: {reset_link}",
-        subtype=MessageType.html,
-    )
+
+    subject = "Password Reset Link"
+    recipients = [email.dict().get("email")]
+    message_body = f"Click the following link to reset your password: {reset_link}"
+
     try:
-        await fastmail.send_message(message)
-        return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        response = ses.send_email(
+            Source="testapitestapi4@gmail.com",
+            Destination={"ToAddresses": recipients},
+            Message={
+                "Subject": {"Data": subject},
+                "Body": {"Text": {"Data": message_body}},
+            },
+        )
+        return JSONResponse(status_code=200, content={"message": "Email has been sent"})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# @router.post("/reset-password")
+# async def send_password_reset_email(email: SEmailSchema) -> JSONResponse:
+#     reset_link = generate_reset_link()
+#     message = MessageSchema(
+#         subject="Password Reset Link",
+#         recipients=email.dict().get("email"),
+#         body=f"Click the following link to reset your password: {reset_link}",
+#         subtype=MessageType.html,
+#     )
+#     try:
+#         await fastmail.send_message(message)
+#         return JSONResponse(status_code=200, content={"message": "email has been sent"})
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 
 
 def generate_reset_link():

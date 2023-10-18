@@ -29,4 +29,4 @@ class SResetPass(BaseModel):
 
 
 class SEmailSchema(BaseModel):
-    email: List[EmailStr]
+    email: EmailStr
