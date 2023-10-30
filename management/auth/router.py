@@ -48,8 +48,8 @@ async def login_user(
     user = await authenticate_user(user_data.username, user_data.password)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    access_token = create_token({"sub": str(user.id)}, flag=True)
-    refresh_token = create_token({"sub": str(user.id)}, flag=False)
+    access_token = create_token({"sub": str(user.id), "group_id": user.group_id}, flag=True)
+    refresh_token = create_token({"sub": str(user.id), "group_id": user.group_id}, flag=False)
     # response.headers["Authorization"] = f"Bearer {access_token}"
     # response.headers["Refresh-Token"] = f"Bearer {refresh_token}"
     return {
