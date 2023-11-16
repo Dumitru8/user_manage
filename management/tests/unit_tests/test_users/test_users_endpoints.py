@@ -5,7 +5,7 @@ from fastapi import Depends
 from httpx import AsyncClient
 
 from management.auth.auth import create_token, get_user_id_from_token
-from management.users.service import UserData
+from management.users.service import UserService
 
 
 async def test_get_me(ac: AsyncClient):

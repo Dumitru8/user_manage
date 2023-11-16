@@ -1,33 +1,31 @@
 import uuid
 
 from fastapi import HTTPException
-from sqlalchemy import asc, delete, desc, insert, select, update
+from sqlalchemy import asc, delete, desc, insert, select, update, or_
 
 from management.database import async_session_maker
 from management.users.enum import Role
 from management.users.models import User
 
 
-class UserData:
+class UserService:
     @classmethod
     async def get_all_users(
         cls, page_nr, limit, filter_by_name, sort_by, ascending, current_user_id
     ):
-        current_user = await UserData.get_by_id(current_user_id)
+        current_user = await UserService.get_by_id(current_user_id)
         if current_user.role not in (Role.ADMIN, Role.MODERATOR):
             raise HTTPException(
                 status_code=403, detail="Have no access. Admin and moderator only"
             )
         offset = (page_nr - 1) * limit
-        order = None
-        if sort_by == "name":
-            order = asc(User.name) if ascending else desc(User.name)
-        elif sort_by == "surname":
-            order = asc(User.surname) if ascending else desc(User.surname)
-        elif sort_by == "email":
-            order = asc(User.email) if ascending else desc(User.email)
-        elif sort_by == "username":
-            order = asc(User.username) if ascending else desc(User.username)
+        options = {
+            "name": asc(User.name) if ascending else desc(User.name),
+            "surname": asc(User.surname) if ascending else desc(User.surname),
+            "email": asc(User.email) if ascending else desc(User.email),
+            "username": asc(User.username) if ascending else desc(User.username)
+        }
+        order = options.get(sort_by)
         if current_user.role == Role.MODERATOR:
             async with async_session_maker() as session:
                 query = (
@@ -58,9 +56,15 @@ class UserData:
             return users.scalars().all()
 
     @classmethod
-    async def find_user_or_none(cls, **filter_by):
+    async def find_user_or_none(cls, data):
         async with async_session_maker() as session:
-            query = select(User).filter_by(**filter_by)
+            query = select(User).filter(
+                or_(
+                    User.email == data,
+                    User.username == data,
+                    User.phone_number == data
+                )
+            )
             result = await session.execute(query)
             return result.scalar_one_or_none()
 
@@ -72,12 +76,13 @@ class UserData:
             return result.scalar_one_or_none()
 
     @classmethod
-    async def add(cls, **data):
-        query = insert(User).values(**data).returning(User.username)
+    async def add_user(cls, **data):
+        query = insert(User).values(**data).returning(User)
         async with async_session_maker() as session:
             result = await session.execute(query)
             await session.commit()
-            return result.mappings().first()
+            user_mapping = result.mappings().first()
+            return user_mapping["User"]
 
     @classmethod
     async def user_update(cls, user_id, **data):

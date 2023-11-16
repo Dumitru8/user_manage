@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from management.users.service import UserData
+from management.users.service import UserService
 
 
 @pytest.mark.parametrize(
@@ -14,7 +14,7 @@ from management.users.service import UserData
     ],
 )
 async def test_get_by_id(user_id, email, is_present):
-    user = await UserData.get_by_id(user_id)
+    user = await UserService.get_by_id(user_id)
     if is_present:
         assert user
         assert user.id == user_id

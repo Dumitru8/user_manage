@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_mail import MessageSchema, MessageType
 from starlette.responses import JSONResponse
@@ -9,10 +9,10 @@ from management.auth.auth import (
     get_password_hash,
     get_user_id_from_token,
 )
-from management.auth.conf import fastmail
+from management.auth.email_service import fastmail, generate_reset_link, send_password_reset_email_service
 from management.auth.schemas import SEmailSchema, SResetPass, SToken, SUserId
 from management.users.schemas import SUser
-from management.users.service import UserData
+from management.users.service import UserService
 
 router = APIRouter(
     prefix="/auth",
@@ -20,13 +20,13 @@ router = APIRouter(
 )
 
 
-@router.post("/signup")
+@router.post("/signup", response_model=SUser)
 async def signup_user(user_data: SUser):
-    existing_user = await UserData.find_user_or_none(email=user_data.email)
+    existing_user = await UserService.find_user_or_none(data=user_data.email)
     if existing_user:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
     hashed_password = get_password_hash(user_data.password)
-    await UserData.add(
+    user = await UserService.add_user(
         email=user_data.email,
         password=hashed_password,
         name=user_data.name,
@@ -38,21 +38,18 @@ async def signup_user(user_data: SUser):
         s3_path=user_data.s3_path,
         is_blocked=user_data.is_blocked,
         created_at=user_data.created_at,
-        modified_at=user_data.modified_at,
+        modified_at=user_data.modified_at
     )
+    return user
 
 
 @router.post("/login", response_model=SToken)
-async def login_user(
-    response: Response, user_data: OAuth2PasswordRequestForm = Depends()
-):
+async def login_user(user_data: OAuth2PasswordRequestForm = Depends()):
     user = await authenticate_user(user_data.username, user_data.password)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     access_token = create_token({"sub": str(user.id)}, flag=True)
     refresh_token = create_token({"sub": str(user.id)}, flag=False)
-    # response.headers["Authorization"] = f"Bearer {access_token}"
-    # response.headers["Refresh-Token"] = f"Bearer {refresh_token}"
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -87,16 +84,12 @@ async def send_password_reset_email(email: SEmailSchema) -> JSONResponse:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def generate_reset_link():
-    return "http://127.0.0.1:8000/auth/reset-password-data"
-
-
 @router.post("/reset-password-data")
-async def reset_password_data(user_data: SResetPass):
-    user = await UserData.find_user_or_none(email=user_data.email)
+async def reset_password_data(user_data: SResetPass) -> JSONResponse:
+    user = await UserService.find_user_or_none(data=user_data.email)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    await UserData.user_update(
+    await UserService.user_update(
         user.id, password=get_password_hash(user_data.new_password)
     )
     return JSONResponse(

@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from management.auth.auth import get_user_id_from_token
 from management.users.enum import Role
 from management.users.schemas import SUser, SUserUpd
-from management.users.service import UserData
+from management.users.service import UserService
 
 router = APIRouter(
     prefix="/user",
@@ -19,7 +19,7 @@ router = APIRouter(
 async def get_current_user(
     user_id: uuid.UUID = Depends(get_user_id_from_token),
 ) -> SUser:
-    return await UserData.get_by_id(user_id)
+    return await UserService.get_by_id(user_id)
 
 
 @router.patch("/me")
@@ -27,8 +27,8 @@ async def update_current_user(
     user_data: SUserUpd,
     user_id: uuid.UUID = Depends(get_user_id_from_token),
 ):
-    user = await UserData.get_by_id(user_id)
-    await UserData.user_update(
+    user = await UserService.get_by_id(user_id)
+    await UserService.user_update(
         user_id,
         name=user_data.name,
         surname=user_data.surname,
@@ -41,7 +41,7 @@ async def update_current_user(
 
 @router.delete("/me")
 async def delete_current_user(user_id: uuid.UUID = Depends(get_user_id_from_token)):
-    return await UserData.user_delete(user_id)
+    return await UserService.user_delete(user_id)
 
 
 @router.patch("/{user_id}")
@@ -50,11 +50,11 @@ async def get_user_by_id(
     user_data: SUserUpd,
     current_user_id: uuid.UUID = Depends(get_user_id_from_token),
 ) -> SUser:
-    current_user = await UserData.get_by_id(current_user_id)
-    user = await UserData.get_by_id(user_id)
+    current_user = await UserService.get_by_id(current_user_id)
+    user = await UserService.get_by_id(user_id)
     if current_user.role != Role.ADMIN:
         raise HTTPException(status_code=403, detail="Have no access. Admin only")
-    await UserData.user_update(
+    await UserService.user_update(
         user_id,
         name=user_data.name,
         surname=user_data.surname,
@@ -74,7 +74,7 @@ async def get_filtered_users(
     ascending: bool,
     current_user_id: uuid.UUID = Depends(get_user_id_from_token),
 ) -> List[SUser]:
-    return await UserData.get_all_users(
+    return await UserService.get_all_users(
         page, limit, filter_by_name, sort_by, ascending, current_user_id
     )
 
@@ -83,8 +83,8 @@ async def get_filtered_users(
 async def get_user_by_id(
     user_id: uuid.UUID, current_user_id: uuid.UUID = Depends(get_user_id_from_token)
 ) -> SUser:
-    current_user = await UserData.get_by_id(current_user_id)
-    user = await UserData.get_by_id(user_id)
+    current_user = await UserService.get_by_id(current_user_id)
+    user = await UserService.get_by_id(user_id)
     if current_user.role not in (Role.ADMIN, Role.MODERATOR):
         raise HTTPException(
             status_code=403, detail="Have no access. Admin and moderator only"
