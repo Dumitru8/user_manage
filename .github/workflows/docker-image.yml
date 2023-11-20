@@ -42,7 +42,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: Dumitru8/user_manage:latest
+          tags: dumitru8/user_manage:latest
 
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
