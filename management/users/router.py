@@ -85,13 +85,8 @@ async def get_user_by_id(
 ) -> SUser:
     current_user = await UserService.get_by_id(current_user_id)
     user = await UserService.get_by_id(user_id)
-    if current_user.role not in (Role.ADMIN, Role.MODERATOR):
-        raise HTTPException(
-            status_code=403, detail="Have no access. Admin and moderator only"
-        )
-    if current_user.role in (Role.ADMIN, Role.MODERATOR):
-        if current_user.group_id == user.group_id:
-            return user
+    if current_user:
+        return user
     raise HTTPException(
-        status_code=403, detail="Have no access. Admin and moderator of same group only"
+        status_code=403, detail="Have no access. Logined users only"
     )
