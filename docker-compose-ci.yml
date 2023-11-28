@@ -4,7 +4,7 @@ services:
     image: postgres:14.6-alpine
     container_name: db_app
     env_file:
-      - .env
+      - .env.example
     ports:
       - "5432:5432"
 
@@ -20,7 +20,7 @@ services:
       context: .
     container_name: fastapi_app
     env_file:
-      - .env
+      - .env.example
     ports:
       - 8000:8000
     volumes:

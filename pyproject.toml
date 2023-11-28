@@ -1,0 +1,25 @@
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39']
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | node_modules
+)/
+|env/
+|migrations/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+known_third_party = ["fastapi"]
+known_first_party = "user_manage"

@@ -1,3 +1,5 @@
+from management.users.models import User, Group
+from management.users.enum import Role
 import sys
 from logging.config import fileConfig
 from os.path import dirname, abspath
@@ -5,8 +7,7 @@ from os.path import dirname, abspath
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
-from database import Base, DATABASE_URL
-from management.models import *
+from management.database import DATABASE_URL, Base
 
 sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 
